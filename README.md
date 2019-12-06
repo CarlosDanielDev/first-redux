@@ -19,6 +19,29 @@ Como de costume, vamos configurar a estruturas das nossas `pages`, dentro da pas
 ```bash
 mkdir src/pages src/pages/Home src/pages/Cart && touch src/pages/Home/index.js src/pages/Cart/index.js
 ```
+Edite cada arquivo de index das pages que acabamos de criar.
+
+Deixe o `Home/index.js` dessa maneira:
+
+```jsx
+import React from 'react';
+
+export default function Home() {
+  return <div />;
+}
+
+```
+
+Seguindo a mesma lógica, faça o mesmo com `Cart/index.js`.
+
+```jsx
+import React from 'react';
+
+export default function Cart() {
+  return <div />;
+}
+
+```
 
 > O esquema de pastas deve ficar assim
 ```
@@ -48,4 +71,36 @@ Agora vamos editar o arquivo `routes.js`, deixe-o exatamente assim:
 ```jsx
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+
+import Home from './pages/Home';
+import Cart from './pages/Cart';
+export default function Routes(){
+  return (
+    <Switch>
+      <Route path="/" exact component={Home}/>
+      <Route path="/cart" component={Cart}/>
+    </Switch>
+  )
+}
+```
+
+Agora, vamos configurar o arquivo `App.js`, que fica localizado dentro da pasta `src`.
+
+Edite o arquivo, e deixe-o exatamanete assim:
+
+```jsx
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import Routes from './routes';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes />
+    </BrowserRouter>
+  );
+}
+
+export default App;
+
 ```
