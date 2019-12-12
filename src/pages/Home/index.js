@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { MdAddShoppingCart } from 'react-icons/md';
 import PropTypes from 'prop-types';
+import * as CartActions from '../../store/modules/cart/actions';
 
 import { ProductList } from './styles';
 import api from '../../services/api';
@@ -13,7 +15,7 @@ class Home extends Component {
   };
 
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
+    addToCartRequest: PropTypes.func.isRequired,
   };
 
   async componentDidMount() {
@@ -26,17 +28,15 @@ class Home extends Component {
     this.setState({ products: data });
   }
 
-  handleAddToCart = product => {
-    const { dispatch } = this.props;
+  handleAddToCart = id => {
+    const { addToCartRequest } = this.props;
 
-    dispatch({
-      type: 'ADD_TO_CART',
-      product,
-    });
+    addToCartRequest(id);
   };
 
   render() {
     const { products } = this.state;
+    const { amount } = this.props;
 
     return (
       <ProductList>
@@ -46,9 +46,13 @@ class Home extends Component {
             <strong>{product.title}</strong>
             <span>{product.priceFormated}</span>
 
-            <button type="button" onClick={() => this.handleAddToCart(product)}>
+            <button
+              type="button"
+              onClick={() => this.handleAddToCart(product.id)}
+            >
               <div>
                 <MdAddShoppingCart size={16} color="#fff" />
+                {amount[product.id] || 0}
               </div>
               <span>ADICIONAR AO CARRINHO</span>
             </button>
@@ -58,5 +62,13 @@ class Home extends Component {
     );
   }
 }
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+    return amount;
+  }, {}),
+});
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
 
-export default connect()(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
